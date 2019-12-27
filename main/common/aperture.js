@@ -89,7 +89,7 @@ const startRecording = async options => {
   const apertureOpts = {
     fps: record60fps ? 60 : 30,
     cropArea: cropperBounds,
-    resolution: '1920x1053',
+    resolution: `${screenBounds.width}x${screenBounds.height}`,
     showCursor,
     highlightClicks,
     screenId: displayId,
