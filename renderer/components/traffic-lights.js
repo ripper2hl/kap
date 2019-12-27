@@ -7,12 +7,16 @@ export default class TrafficLights extends React.Component {
   };
 
   componentDidMount() {
-    this.tintSubscription = electron.remote.systemPreferences.subscribeNotification('AppleAquaColorVariantChanged', this.onTintChange);
-    this.setState({tint: this.getTintColor()});
+    if (process.platform === 'darwin') {
+      this.tintSubscription = electron.remote.systemPreferences.subscribeNotification('AppleAquaColorVariantChanged', this.onTintChange);
+      this.setState({tint: this.getTintColor()});
+    }
   }
 
   componentWillUnmount() {
-    electron.remote.systemPreferences.unsubscribeNotification(this.tintSubscription);
+    if (process.platform === 'darwin') {
+      electron.remote.systemPreferences.unsubscribeNotification(this.tintSubscription);
+    }
   }
 
   getTintColor = () => electron.remote.systemPreferences.getUserDefault('AppleAquaColorVariant', 'string') === '6' ? 'graphite' : 'blue';

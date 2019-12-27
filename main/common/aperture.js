@@ -7,6 +7,8 @@ const createAperture = require('aperture');
 const recordScreen = require('record-screen');
 
 let recordScreenControl;
+let recordScreenFilePath;
+
 const {openEditorWindow} = require('../editor');
 const {closePrefsWindow} = require('../preferences');
 const {setRecordingTray, disableTray, resetTray} = require('../tray');
@@ -87,7 +89,7 @@ const startRecording = async options => {
   const apertureOpts = {
     fps: record60fps ? 60 : 30,
     cropArea: cropperBounds,
-    resolution: '1920x1080',
+    resolution: '1920x1053',
     showCursor,
     highlightClicks,
     screenId: displayId,
@@ -138,7 +140,8 @@ const startRecording = async options => {
     if (process.platform === 'darwin') {
       await aperture.startRecording(apertureOpts);
     } else {
-      recordScreenControl = recordScreen('/tmp/test.mp4', apertureOpts);
+      recordScreenFilePath = '/tmp/test.mp4';
+      recordScreenControl = recordScreen(recordScreenFilePath, apertureOpts);
       await recordScreenControl;
     }
   } catch (error) {
@@ -191,6 +194,7 @@ const stopRecording = async () => {
       filePath = await aperture.stopRecording();
     } else {
       recordScreenControl.stop();
+      filePath = recordScreenFilePath;
     }
   } catch (error) {
     track('recording/stopped/error');
