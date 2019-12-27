@@ -70,7 +70,9 @@ const startRecording = async options => {
 
   const {cropperBounds, screenBounds, displayId} = options;
 
-  cropperBounds.y = screenBounds.height - (cropperBounds.y + cropperBounds.height);
+  if (process.platform === 'darwin') {
+    cropperBounds.y = screenBounds.height - (cropperBounds.y + cropperBounds.height);
+  }
 
   const {
     record60fps,
@@ -136,7 +138,6 @@ const startRecording = async options => {
     if (process.platform === 'darwin') {
       await aperture.startRecording(apertureOpts);
     } else {
-      console.log(`crop=${apertureOpts.cropArea.width}:${apertureOpts.cropArea.height}:${apertureOpts.cropArea.x}:${apertureOpts.cropArea.y}`);
       recordScreenControl = recordScreen('/tmp/test.mp4', apertureOpts);
       await recordScreenControl;
     }
