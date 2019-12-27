@@ -24,6 +24,12 @@ require('./utils/sentry');
 
 const filesToOpen = [];
 
+if (app.dock === undefined) {
+  app.dock = {};
+  app.dock.hide = function () { };
+  app.dock.show = function () { };
+}
+
 app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar');
 
 app.on('open-file', (event, path) => {
@@ -67,7 +73,6 @@ const checkForUpdates = () => {
 // Prepare the renderer once the app is ready
 (async () => {
   await app.whenReady();
-
   app.dock.hide();
 
   // Ensure the app is in the Applications folder
