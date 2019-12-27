@@ -4,7 +4,9 @@ const {dialog} = require('electron');
 const desktopIcons = require('hide-desktop-icons');
 const dnd = require('@sindresorhus/do-not-disturb');
 const createAperture = require('aperture');
+const recordScreen = require('record-screen');
 
+let recordScreenControl;
 const {openEditorWindow} = require('../editor');
 const {closePrefsWindow} = require('../preferences');
 const {setRecordingTray, disableTray, resetTray} = require('../tray');
@@ -19,7 +21,12 @@ const {hasMicrophoneAccess} = require('./system-permissions');
 const settings = require('./settings');
 const {track} = require('./analytics');
 
-const aperture = createAperture();
+let aperture;
+
+if (process.platform === 'darwin') {
+  aperture = createAperture();
+}
+
 const {audioDevices, videoCodecs} = createAperture;
 
 // eslint-disable-next-line no-unused-vars
@@ -78,9 +85,11 @@ const startRecording = async options => {
   const apertureOpts = {
     fps: record60fps ? 60 : 30,
     cropArea: cropperBounds,
+    resolution: '1920x1080',
     showCursor,
     highlightClicks,
-    screenId: displayId
+    screenId: displayId,
+    display: '1'
   };
 
   lastUsedSettings = {
@@ -124,7 +133,13 @@ const startRecording = async options => {
   console.log(`Took care of DND after ${(Date.now() - past) / 1000}s`);
 
   try {
-    await aperture.startRecording(apertureOpts);
+    if (process.platform === 'darwin') {
+      await aperture.startRecording(apertureOpts);
+    } else {
+      console.log(`crop=${apertureOpts.cropArea.width}:${apertureOpts.cropArea.height}:${apertureOpts.cropArea.x}:${apertureOpts.cropArea.y}`);
+      recordScreenControl = recordScreen('/tmp/test.mp4', apertureOpts);
+      await recordScreenControl;
+    }
   } catch (error) {
     track('recording/stopped/error');
     dialog.showErrorBox('Recording error', error.message);
@@ -146,15 +161,17 @@ const startRecording = async options => {
   past = Date.now();
 
   // Track aperture errors after recording has started, to avoid kap freezing if something goes wrong
-  aperture.recorder.catch(error => {
-    // Make sure it doesn't catch the error of ending the recording
-    if (past) {
-      track('recording/stopped/error');
-      dialog.showErrorBox('Recording error', error.message);
-      past = null;
-      cleanup();
-    }
-  });
+  if (process.platform === 'darwin') {
+    aperture.recorder.catch(error => {
+      // Make sure it doesn't catch the error of ending the recording
+      if (past) {
+        track('recording/stopped/error');
+        dialog.showErrorBox('Recording error', error.message);
+        past = null;
+        cleanup();
+      }
+    });
+  }
 };
 
 const stopRecording = async () => {
@@ -169,7 +186,11 @@ const stopRecording = async () => {
   let filePath;
 
   try {
-    filePath = await aperture.stopRecording();
+    if (process.platform === 'darwin') {
+      filePath = await aperture.stopRecording();
+    } else {
+      recordScreenControl.stop();
+    }
   } catch (error) {
     track('recording/stopped/error');
     dialog.showErrorBox('Recording error', error.message);

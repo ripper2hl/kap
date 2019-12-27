@@ -28,6 +28,7 @@ if (app.dock === undefined) {
   app.dock = {};
   app.dock.hide = function () { };
   app.dock.show = function () { };
+  app.dock.isVisible = () => true;
 }
 
 app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar');

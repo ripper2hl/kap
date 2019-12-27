@@ -6167,6 +6167,11 @@ readdirp@^2.2.1:
     micromatch "^3.1.10"
     readable-stream "^2.0.2"
 
+record-screen@^3.11.0:
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/record-screen/-/record-screen-3.11.0.tgz#8473e559d0bdb6a27f799147e6df2897720bc5db"
+  integrity sha512-NHjPXvwdLeP4nXxMnX0iTdPE3/w7s7oP2xQO7BdOIByVwmdJ3FBs14+W59i+t0JxMF9lUjCpdfAqaXN/NJf8cA==
+
 recursive-copy@2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/recursive-copy/-/recursive-copy-2.0.6.tgz#d590f9eb5f165b96a1b80bc8f9cbcb5c6f9c89e9"
