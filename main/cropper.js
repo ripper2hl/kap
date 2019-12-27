@@ -135,9 +135,11 @@ const openCropperWindow = async () => {
   }
 
   croppers.get(activeDisplayId).focus();
-  notificationId = systemPreferences.subscribeWorkspaceNotification('NSWorkspaceActiveSpaceDidChangeNotification', () => {
-    closeAllCroppers();
-  });
+  if(process.platform === 'darwin'){    
+    notificationId = systemPreferences.subscribeWorkspaceNotification('NSWorkspaceActiveSpaceDidChangeNotification', () => {
+      closeAllCroppers();
+    });
+  }
 
   screen.on('display-removed', (event, oldDisplay) => {
     const {id} = oldDisplay;
