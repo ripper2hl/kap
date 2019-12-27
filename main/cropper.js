@@ -135,7 +135,7 @@ const openCropperWindow = async () => {
   }
 
   croppers.get(activeDisplayId).focus();
-  if(process.platform === 'darwin'){    
+  if (process.platform === 'darwin') {
     notificationId = systemPreferences.subscribeWorkspaceNotification('NSWorkspaceActiveSpaceDidChangeNotification', () => {
       closeAllCroppers();
     });
