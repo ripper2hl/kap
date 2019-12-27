@@ -34,7 +34,15 @@ const openSystemPreferences = path => shell.openExternal(`x-apple.systempreferen
 
 // Microphone
 
-const getMicrophoneAccess = () => systemPreferences.getMediaAccessStatus('microphone');
+const getMicrophoneAccess = () => {
+  let microphoneAccess;
+  if( process.platform === 'darwin' ){
+    microphoneAccess = systemPreferences.getMediaAccessStatus('microphone')
+  }else{
+    microphoneAccess = 'denied'
+  }
+  return microphoneAccess;
+}
 
 const microphoneFallback = promptSystemPreferences({
   message: 'Kap cannot access the microphone.',
